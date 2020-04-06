@@ -10,5 +10,5 @@ type Data = {
   value?: string;
   method?: string;
   status_code?: number | string;
-  url?: any;
+  url?: string;
 };

@@ -254,7 +254,7 @@ type EventContexts = {
   trace?: TraceContext;
 };
 
-type SentryEventBase = {
+export type SentryEventBase = {
   id: string;
   eventID: string;
   groupID?: string;

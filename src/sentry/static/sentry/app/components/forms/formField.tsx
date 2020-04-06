@@ -7,8 +7,7 @@ import {defined} from 'app/utils';
 import InlineSvg from 'app/components/inlineSvg';
 import Tooltip from 'app/components/tooltip';
 import {Context} from 'app/components/forms/form';
-
-type Value = string | number | boolean;
+import {Value} from 'app/types/formField';
 
 type FormFieldProps = {
   name: string;
@@ -24,7 +23,7 @@ type FormFieldProps = {
   onChange?: (value: Value) => void;
   error?: string;
   value?: Value;
-  meta: any;
+  meta?: any;
 };
 
 type FormFieldState = {
