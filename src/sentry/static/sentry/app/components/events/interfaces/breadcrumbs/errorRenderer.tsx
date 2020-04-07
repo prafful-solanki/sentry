@@ -4,13 +4,12 @@ import omit from 'lodash/omit';
 import CrumbTable from 'app/components/events/interfaces/breadcrumbs/crumbTable';
 import SummaryLine from 'app/components/events/interfaces/breadcrumbs/summaryLine';
 import {getMeta} from 'app/components/events/meta/metaProxy';
-import {defined} from 'app/utils';
 
 import getBreadcrumbCustomRendererValue from './getBreadcrumbCustomRendererValue';
-import {Crumb} from './types';
+import {CrumbTypeDefault} from './types';
 
 type Props = {
-  crumb: Crumb;
+  crumb: CrumbTypeDefault;
 };
 
 const ErrorRenderer = ({crumb}: Props) => {
@@ -22,17 +21,17 @@ const ErrorRenderer = ({crumb}: Props) => {
         <SummaryLine>
           <pre>
             <code>
-              {defined(data?.type) &&
+              {data?.type &&
                 getBreadcrumbCustomRendererValue({
                   value: <strong>{`${data.type}: `}</strong>,
                   meta: getMeta(data, 'type'),
                 })}
-              {defined(data?.value) &&
+              {data?.value &&
                 getBreadcrumbCustomRendererValue({
                   value: crumb.message ? `${data.value}. ` : data.value,
                   meta: getMeta(data, 'value'),
                 })}
-              {defined(crumb?.message) &&
+              {crumb?.message &&
                 getBreadcrumbCustomRendererValue({
                   value: crumb.message,
                   meta: getMeta(crumb, 'message'),

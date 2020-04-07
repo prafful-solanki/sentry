@@ -17,7 +17,7 @@ type CrumbTypeBase = {
   event_id?: string;
 };
 
-type CrumbTypeNavigation = {
+export type CrumbTypeNavigation = {
   type: 'navigation';
   data?: {
     to: string;
@@ -25,7 +25,7 @@ type CrumbTypeNavigation = {
   };
 } & CrumbTypeBase;
 
-type CrumbTypeHTTP = {
+export type CrumbTypeHTTP = {
   type: 'http';
   data?: {
     url?: string;
@@ -44,7 +44,7 @@ type CrumbTypeHTTP = {
   };
 } & CrumbTypeBase;
 
-type CrumbTypeDefault = {
+export type CrumbTypeDefault = {
   type: 'error' | 'info' | 'debug' | 'message' | 'default' | 'user';
   data?: {[key: string]: any};
 } & CrumbTypeBase;
