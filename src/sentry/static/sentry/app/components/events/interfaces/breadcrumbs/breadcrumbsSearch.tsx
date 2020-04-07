@@ -4,12 +4,11 @@ import styled from '@emotion/styled';
 import TextField from 'app/components/forms/textField';
 import {IconSearch} from 'app/icons/iconSearch';
 import {t} from 'app/locale';
-import {Value} from 'app/types/formField';
 import {IconClose} from 'app/icons/iconClose';
 import space from 'app/styles/space';
 
 type Props = {
-  searchTerm: Value;
+  searchTerm: string;
   onChangeSearchTerm: TextField['props']['onChange'];
   onClearSearchTerm: () => void;
 };

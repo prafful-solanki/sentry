@@ -6,7 +6,6 @@ import GuideAnchor from 'app/components/assistant/guideAnchor';
 import EmptyStateWarning from 'app/components/emptyStateWarning';
 import {t} from 'app/locale';
 import {SentryEventBase} from 'app/types';
-import {Value} from 'app/types/formField';
 import space from 'app/styles/space';
 
 import {PlatformContextProvider} from './platformContext';
@@ -20,7 +19,7 @@ type Crumb = React.ComponentProps<typeof Breadcrumb>['crumb'];
 
 type State = {
   isCollapsed: boolean;
-  searchTerm: Value;
+  searchTerm: string;
   crumbs: Array<Crumb>;
   filteredCrumbs: Array<Crumb>;
 };
@@ -123,7 +122,7 @@ class BreadcrumbsContainer extends React.Component<Props, State> {
     };
   };
 
-  handleChangeSearchTerm = (searchTerm: Value) => {
+  handleChangeSearchTerm = (searchTerm: string) => {
     const {crumbs} = this.state;
 
     const filteredCrumbs = crumbs.filter(

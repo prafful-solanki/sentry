@@ -7,7 +7,8 @@ import {defined} from 'app/utils';
 import InlineSvg from 'app/components/inlineSvg';
 import Tooltip from 'app/components/tooltip';
 import {Context} from 'app/components/forms/form';
-import {Value} from 'app/types/formField';
+
+type Value = string | number | boolean;
 
 type FormFieldProps = {
   name: string;

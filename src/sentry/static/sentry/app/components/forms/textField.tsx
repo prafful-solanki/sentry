@@ -1,8 +1,9 @@
 import InputField from 'app/components/forms/inputField';
 
-type Props = {
+type Props = Omit<InputField['props'], 'onChange'> & {
   spellCheck?: string;
-} & InputField['props'];
+  onChange?: (value: string) => void;
+};
 
 class TextField extends InputField<Props> {
   getAttributes() {
