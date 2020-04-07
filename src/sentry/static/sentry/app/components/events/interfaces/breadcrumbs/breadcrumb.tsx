@@ -14,60 +14,19 @@ import {Color} from 'app/utils/theme';
 import space from 'app/styles/space';
 
 import BreadcrumbTime from './breadcrumbTime';
-
-type CrumbCategory =
-  | 'started'
-  | 'UIViewController'
-  | 'touch'
-  | 'message'
-  | 'ui.click'
-  | 'xhr'
-  | 'console';
-
-type CrumbType =
-  | 'error'
-  | 'info'
-  | 'navigation'
-  | 'debug'
-  | 'http'
-  | 'message'
-  | 'default'
-  | 'user';
-
-type CrumbLevel = 'info' | 'error';
-
-// TODO(Priscila): check this structure
-type CrumbData = {
-  controller?: string;
-  view?: string;
-  type?: string;
-  value?: string;
-  method?: 'POST' | 'GET' | 'PUT';
-  status_code?: number | string;
-  url?: string;
-  to?: string;
-  from?: string;
-};
-
-type Crumb = {
-  category: CrumbCategory;
-  level?: CrumbLevel;
-  event_id?: string;
-  timestamp: string;
-  data: CrumbData;
-  message: string;
-  type: CrumbType;
-};
+import {Crumb, CrumbType} from './types';
 
 type Props = {
   crumb: Crumb;
 };
 
-const BreadCrumbContent = ({crumb}: Props) => {
+const BreadCrumbContent = ({crumb: {type = 'default', ...rest}}: Props) => {
+  const crumb = {type, ...rest} as Crumb;
+
   const getCrumbType = (): CrumbType => {
     // special case for 'ui.' and `sentry.` category breadcrumbs
     // TODO: find a better way to customize UI around non-schema data
-    if (crumb.type === 'default') {
+    if (crumb.type === 'default' && crumb.category) {
       const [category, subcategory] = crumb.category.split('.');
       if (category === 'ui') {
         return 'user';
@@ -133,6 +92,7 @@ const BreadCrumbContent = ({crumb}: Props) => {
         </Wrapper>
       );
     }
+    case 'message':
     case 'error': {
       return (
         <Wrapper error>

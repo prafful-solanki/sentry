@@ -12,10 +12,9 @@ import {PlatformContextProvider} from './platformContext';
 import BreadCrumbsSearch from './breadcrumbsSearch';
 import Breadcrumb from './breadcrumb';
 import BreadcrumbCollapsed from './breadcrumbCollapsed';
+import {Crumb} from './types';
 
 const MAX_CRUMBS_WHEN_COLLAPSED = 10;
-
-type Crumb = React.ComponentProps<typeof Breadcrumb>['crumb'];
 
 type State = {
   isCollapsed: boolean;
@@ -85,22 +84,23 @@ class BreadcrumbsContainer extends React.Component<Props, State> {
       return {
         type: 'error',
         level: 'error',
-        message: '',
         category: this.moduleToCategory(mdl) || 'exception',
-        data: {type, value},
-        timestamp: event.dateCreated || '',
+        data: {
+          type,
+          value,
+        },
+        timestamp: event.dateCreated,
       };
     }
 
     const levelTag = (event.tags || []).find(tag => tag.key === 'level');
 
     return {
-      type: 'error',
+      type: 'message',
       level: levelTag?.value as Crumb['level'],
       category: 'message',
-      message: event.message || '',
-      timestamp: event.dateCreated || '',
-      data: {},
+      message: event.message,
+      timestamp: event.dateCreated,
     };
   };
 
