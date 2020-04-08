@@ -226,6 +226,7 @@ class SpanDetail extends React.Component<Props, State> {
             type: 'error',
           }}
           system
+          hideCloseButton
         />
         <SpanDetails>
           <table className="table key-value">
