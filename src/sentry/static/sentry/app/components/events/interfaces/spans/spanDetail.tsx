@@ -105,13 +105,11 @@ class SpanDetail extends React.Component<Props, State> {
       return null;
     }
 
-    const {span, orgId, trace} = this.props;
+    const {span, orgId, trace, eventView} = this.props;
 
     assert(!isGapSpan(span));
 
     if (this.state.transactionResults.length === 1) {
-      const {eventView} = this.props;
-
       const parentTransactionLink = eventDetailsRoute({
         eventSlug: generateSlug(this.state.transactionResults[0]),
         orgSlug: this.props.orgId,
@@ -134,7 +132,7 @@ class SpanDetail extends React.Component<Props, State> {
       end: trace.traceEndTimestamp,
     });
 
-    const eventView = EventView.fromSavedQuery({
+    const childrenEventView = EventView.fromSavedQuery({
       id: undefined,
       name: `Children from Span ID ${span.span_id}`,
       fields: [
@@ -146,8 +144,7 @@ class SpanDetail extends React.Component<Props, State> {
       ],
       orderby: '-timestamp',
       query: `event.type:transaction trace:${span.trace_id} trace.parent_span:${span.span_id}`,
-      tags: ['release', 'project.name', 'user.email', 'user.ip', 'environment'],
-      projects: [],
+      projects: eventView.project,
       version: 2,
       start,
       end,
@@ -157,7 +154,7 @@ class SpanDetail extends React.Component<Props, State> {
       <StyledButton
         data-test-id="view-child-transactions"
         size="xsmall"
-        to={eventView.getResultsViewUrlTarget(orgId)}
+        to={childrenEventView.getResultsViewUrlTarget(orgId)}
       >
         {t('View Children')}
       </StyledButton>
@@ -165,7 +162,7 @@ class SpanDetail extends React.Component<Props, State> {
   }
 
   renderTraceButton() {
-    const {span, orgId, trace} = this.props;
+    const {span, orgId, trace, eventView} = this.props;
 
     const {start, end} = getTraceDateTimeRange({
       start: trace.traceStartTimestamp,
@@ -176,7 +173,7 @@ class SpanDetail extends React.Component<Props, State> {
       return null;
     }
 
-    const eventView = EventView.fromSavedQuery({
+    const traceEventView = EventView.fromSavedQuery({
       id: undefined,
       name: `Transactions with Trace ID ${span.trace_id}`,
       fields: [
@@ -188,15 +185,14 @@ class SpanDetail extends React.Component<Props, State> {
       ],
       orderby: '-timestamp',
       query: `event.type:transaction trace:${span.trace_id}`,
-      tags: ['release', 'project.name', 'user.email', 'user.ip', 'environment'],
-      projects: [],
+      projects: eventView.project,
       version: 2,
       start,
       end,
     });
 
     return (
-      <StyledButton size="xsmall" to={eventView.getResultsViewUrlTarget(orgId)}>
+      <StyledButton size="xsmall" to={traceEventView.getResultsViewUrlTarget(orgId)}>
         {t('Search by Trace')}
       </StyledButton>
     );
