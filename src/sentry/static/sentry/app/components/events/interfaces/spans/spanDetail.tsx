@@ -17,6 +17,7 @@ import getDynamicText from 'app/utils/getDynamicText';
 import {assert} from 'app/types/utils';
 import AlertMessage from 'app/components/alertMessage';
 import {TableDataRow} from 'app/views/eventsV2/table/types';
+import Link from 'app/components/links/link';
 
 import {ProcessedSpanType, RawSpanType, ParsedTraceType} from './types';
 import {isGapSpan, getTraceDateTimeRange} from './utils';
@@ -202,9 +203,9 @@ class SpanDetail extends React.Component<Props, State> {
   }
 
   renderSpanErrorMessage() {
-    const {orgId, spanErrors, totalNumberOfErrors} = this.props;
+    const {orgId, spanErrors, totalNumberOfErrors, span, trace, eventView} = this.props;
 
-    if (spanErrors.length === 0 || totalNumberOfErrors === 0) {
+    if (spanErrors.length === 0 || totalNumberOfErrors === 0 || isGapSpan(span)) {
       return null;
     }
 
@@ -212,17 +213,53 @@ class SpanDetail extends React.Component<Props, State> {
 
     const eventSlug = generateEventSlug(spanErrors[0]);
 
-    const target = eventDetailsRoute({
-      orgSlug: orgId,
-      eventSlug,
+    const {start, end} = getTraceDateTimeRange({
+      start: trace.traceStartTimestamp,
+      end: trace.traceEndTimestamp,
     });
 
+    const errorsEventView = EventView.fromSavedQuery({
+      id: undefined,
+      name: `Error events associated with span ${span.span_id}`,
+      fields: ['title', 'project', 'issue', 'timestamp'],
+      orderby: '-timestamp',
+      query: `event.type:error trace:${span.trace_id} trace.span:${span.span_id}`,
+      projects: eventView.project,
+      version: 2,
+      start,
+      end,
+    });
+
+    const target =
+      spanErrors.length === 1
+        ? {
+            pathname: eventDetailsRoute({
+              orgSlug: orgId,
+              eventSlug,
+            }),
+          }
+        : errorsEventView.getResultsViewUrlTarget(orgId);
+
     const message =
-      totalNumberOfErrors === 1
-        ? 'An error event occurred in this span.'
-        : spanErrors.length === totalNumberOfErrors
-        ? `${totalNumberOfErrors} error events occurred in this span.`
-        : `${spanErrors.length} out of the ${totalNumberOfErrors} error events occurred in this span.`;
+      totalNumberOfErrors === 1 ? (
+        <Link to={target}>
+          <span>{t('An error event occurred in this span.')}</span>
+        </Link>
+      ) : spanErrors.length === totalNumberOfErrors ? (
+        <div>
+          <Link to={target}>
+            <span>{`${totalNumberOfErrors} error events`}</span>
+          </Link>
+          <span>{' occurred in this span.'}</span>
+        </div>
+      ) : (
+        <div>
+          <Link to={target}>
+            <span>{`${spanErrors.length} out of the ${totalNumberOfErrors} error events`}</span>
+          </Link>
+          <span>{' occurred in this span.'}</span>
+        </div>
+      );
 
     return (
       <AlertMessage
@@ -230,7 +267,6 @@ class SpanDetail extends React.Component<Props, State> {
           id: 'id',
           message,
           type: 'error',
-          url: target,
         }}
         system
         hideCloseButton
