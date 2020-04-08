@@ -264,7 +264,7 @@ class SpanDetail extends React.Component<Props, State> {
     return (
       <AlertMessage
         alert={{
-          id: 'id',
+          id: `span-error-${span.span_id}`,
           message,
           type: 'error',
         }}
