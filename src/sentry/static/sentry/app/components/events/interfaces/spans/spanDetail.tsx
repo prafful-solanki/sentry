@@ -212,7 +212,13 @@ class SpanDetail extends React.Component<Props, State> {
     }
 
     return (
-      <div>
+      <SpanDetailContainer
+        data-component="span-detail"
+        onClick={event => {
+          // prevent toggling the span detail
+          event.stopPropagation();
+        }}
+      >
         <AlertMessage
           alert={{
             id: 'id',
@@ -221,14 +227,7 @@ class SpanDetail extends React.Component<Props, State> {
           }}
           system
         />
-
-        <SpanDetailContainer
-          data-component="span-detail"
-          onClick={event => {
-            // prevent toggling the span detail
-            event.stopPropagation();
-          }}
-        >
+        <SpanDetails>
           <table className="table key-value">
             <tbody>
               <Row title="Span ID" extra={this.renderTraversalButton()}>
@@ -274,8 +273,8 @@ class SpanDetail extends React.Component<Props, State> {
               ))}
             </tbody>
           </table>
-        </SpanDetailContainer>
-      </div>
+        </SpanDetails>
+      </SpanDetailContainer>
     );
   }
 }
@@ -288,8 +287,11 @@ const StyledButton = styled(Button)`
 
 const SpanDetailContainer = styled('div')`
   border-bottom: 1px solid ${p => p.theme.gray1};
-  padding: ${space(2)};
   cursor: auto;
+`;
+
+const SpanDetails = styled('div')`
+  padding: ${space(2)};
 `;
 
 const ValueTd = styled('td')`
