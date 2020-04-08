@@ -63,6 +63,18 @@ class SpanGroup extends React.Component<PropType, State> {
     });
   }
 
+  getTotalNumberOfErrors(): number {
+    const {spansWithErrors} = this.props;
+
+    const data = spansWithErrors?.data;
+
+    if (Array.isArray(data)) {
+      return data.length;
+    }
+
+    return 0;
+  }
+
   render() {
     const {
       spanBarColour,
@@ -100,6 +112,7 @@ class SpanGroup extends React.Component<PropType, State> {
           isLast={isLast}
           isRoot={isRoot}
           isCurrentSpanFilteredOut={isCurrentSpanFilteredOut}
+          totalNumberOfErrors={this.getTotalNumberOfErrors()}
           spanErrors={this.getSpanErrors()}
         />
         {this.renderSpanChildren()}

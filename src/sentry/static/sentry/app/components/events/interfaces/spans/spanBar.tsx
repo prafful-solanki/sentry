@@ -183,6 +183,7 @@ type SpanBarProps = {
   toggleSpanTree: () => void;
   isCurrentSpanFilteredOut: boolean;
   eventView: EventView;
+  totalNumberOfErrors: number;
   spanErrors: TableDataRow[];
 };
 
@@ -223,7 +224,15 @@ class SpanBar extends React.Component<SpanBarProps, SpanBarState> {
       return null;
     }
 
-    const {span, orgId, isRoot, eventView, trace} = this.props;
+    const {
+      span,
+      orgId,
+      isRoot,
+      eventView,
+      trace,
+      totalNumberOfErrors,
+      spanErrors,
+    } = this.props;
 
     return (
       <SpanDetail
@@ -232,6 +241,8 @@ class SpanBar extends React.Component<SpanBarProps, SpanBarState> {
         isRoot={!!isRoot}
         eventView={eventView}
         trace={trace}
+        totalNumberOfErrors={totalNumberOfErrors}
+        spanErrors={spanErrors}
       />
     );
   };

@@ -16,6 +16,7 @@ import EventView from 'app/utils/discover/eventView';
 import getDynamicText from 'app/utils/getDynamicText';
 import {assert} from 'app/types/utils';
 import AlertMessage from 'app/components/alertMessage';
+import {TableDataRow} from 'app/views/eventsV2/table/types';
 
 import {ProcessedSpanType, RawSpanType, ParsedTraceType} from './types';
 import {isGapSpan, getTraceDateTimeRange} from './utils';
@@ -33,6 +34,8 @@ type Props = {
   isRoot: boolean;
   eventView: EventView;
   trace: Readonly<ParsedTraceType>;
+  totalNumberOfErrors: number;
+  spanErrors: TableDataRow[];
 };
 
 type State = {
@@ -198,6 +201,35 @@ class SpanDetail extends React.Component<Props, State> {
     );
   }
 
+  renderSpanErrorMessage() {
+    const {spanErrors, totalNumberOfErrors} = this.props;
+
+    if (spanErrors.length === 0 || totalNumberOfErrors === 0) {
+      return null;
+    }
+
+    // invariant: spanErrors.length <= totalNumberOfErrors
+
+    const message =
+      totalNumberOfErrors === 1
+        ? 'An error occurred in this span.'
+        : spanErrors.length === totalNumberOfErrors
+        ? `${totalNumberOfErrors} errors occurred in this span.`
+        : `${spanErrors.length} out of the ${totalNumberOfErrors} errors occurred in this span.`;
+
+    return (
+      <AlertMessage
+        alert={{
+          id: 'id',
+          message,
+          type: 'error',
+        }}
+        system
+        hideCloseButton
+      />
+    );
+  }
+
   render() {
     const {span} = this.props;
 
@@ -219,15 +251,7 @@ class SpanDetail extends React.Component<Props, State> {
           event.stopPropagation();
         }}
       >
-        <AlertMessage
-          alert={{
-            id: 'id',
-            message: '2 out of the 25 errors occurred in this span.',
-            type: 'error',
-          }}
-          system
-          hideCloseButton
-        />
+        {this.renderSpanErrorMessage()}
         <SpanDetails>
           <table className="table key-value">
             <tbody>
