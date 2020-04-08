@@ -13,6 +13,7 @@ import EventsV2 from 'app/utils/discover/eventsv2';
 import {stringifyQueryObject, QueryResults} from 'app/utils/tokenizeSearch';
 import AlertLink from 'app/components/alertLink';
 import {IconWarning} from 'app/icons';
+import {TableData} from 'app/views/eventsV2/table/types';
 
 import {SentryTransactionEvent, ParsedTraceType} from './types';
 import {parseTrace, getTraceDateTimeRange} from './utils';
@@ -135,7 +136,9 @@ class SpansInterface extends React.Component<Props, State> {
       <div>
         <EventsV2 location={location} eventView={traceErrorsEventView} orgSlug={orgId}>
           {({isLoading, tableData}) => {
-            const numOfErrors = tableData?.data.length || 0;
+            const spansWithErrors = filterSpansWithErrors(parsedTrace, tableData);
+
+            const numOfErrors = spansWithErrors?.data.length || 0;
 
             return (
               <React.Fragment>
@@ -157,7 +160,7 @@ class SpansInterface extends React.Component<Props, State> {
                     orgId={orgId}
                     eventView={eventView}
                     parsedTrace={parsedTrace}
-                    spansWithErrors={tableData}
+                    spansWithErrors={spansWithErrors}
                   />
                 </Panel>
               </React.Fragment>
@@ -172,5 +175,40 @@ class SpansInterface extends React.Component<Props, State> {
 const StyledSearchBar = styled(SearchBar)`
   margin-bottom: ${space(1)};
 `;
+
+function filterSpansWithErrors(
+  parsedTrace: ParsedTraceType,
+  tableData: TableData | null | undefined
+): TableData | null | undefined {
+  if (!tableData) {
+    return tableData;
+  }
+
+  const data = tableData?.data ?? [];
+
+  const filtered = data.filter(row => {
+    const spanID = row['trace.span'] || '';
+
+    if (!spanID) {
+      return false;
+    }
+
+    if (spanID === parsedTrace.rootSpanID) {
+      return true;
+    }
+
+    const hasSpan =
+      parsedTrace.spans.findIndex(span => {
+        return spanID === span.span_id;
+      }) >= 0;
+
+    return hasSpan;
+  });
+
+  return {
+    ...tableData,
+    data: filtered,
+  };
+}
 
 export default ReactRouter.withRouter(SpansInterface);
