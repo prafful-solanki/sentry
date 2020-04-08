@@ -212,10 +212,10 @@ class SpanDetail extends React.Component<Props, State> {
 
     const message =
       totalNumberOfErrors === 1
-        ? 'An error occurred in this span.'
+        ? 'An error event occurred in this span.'
         : spanErrors.length === totalNumberOfErrors
-        ? `${totalNumberOfErrors} errors occurred in this span.`
-        : `${spanErrors.length} out of the ${totalNumberOfErrors} errors occurred in this span.`;
+        ? `${totalNumberOfErrors} error events occurred in this span.`
+        : `${spanErrors.length} out of the ${totalNumberOfErrors} error events occurred in this span.`;
 
     return (
       <AlertMessage
