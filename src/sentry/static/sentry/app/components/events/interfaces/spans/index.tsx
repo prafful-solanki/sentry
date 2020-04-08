@@ -11,8 +11,7 @@ import space from 'app/styles/space';
 import EventView from 'app/utils/discover/eventView';
 import EventsV2 from 'app/utils/discover/eventsv2';
 import {stringifyQueryObject, QueryResults} from 'app/utils/tokenizeSearch';
-import AlertLink from 'app/components/alertLink';
-import {IconWarning} from 'app/icons';
+import AlertMessage from 'app/components/alertMessage';
 import {TableData} from 'app/views/eventsV2/table/types';
 
 import {SentryTransactionEvent, ParsedTraceType} from './types';
@@ -57,11 +56,9 @@ class SpansInterface extends React.Component<Props, State> {
   renderTraceErrorsAlert({
     isLoading,
     numOfErrors,
-    traceErrorsEventView,
   }: {
     isLoading: boolean;
     numOfErrors: number;
-    traceErrorsEventView: EventView;
   }) {
     if (isLoading) {
       return null;
@@ -70,8 +67,6 @@ class SpansInterface extends React.Component<Props, State> {
     if (numOfErrors === 0) {
       return null;
     }
-
-    const {orgId} = this.props;
 
     const label =
       numOfErrors > 1
@@ -82,13 +77,17 @@ class SpansInterface extends React.Component<Props, State> {
         : t(`There was an error event associated with this transaction event.`);
 
     return (
-      <AlertLink
-        to={traceErrorsEventView.getResultsViewUrlTarget(orgId)}
-        icon={<IconWarning />}
-        priority="error"
-      >
-        {label}
-      </AlertLink>
+      <AlertMessageContainer>
+        <AlertMessage
+          alert={{
+            id: 'id',
+            message: <span>{label}</span>,
+            type: 'error',
+          }}
+          system={false}
+          hideCloseButton
+        />
+      </AlertMessageContainer>
     );
   }
 
@@ -145,7 +144,6 @@ class SpansInterface extends React.Component<Props, State> {
                 {this.renderTraceErrorsAlert({
                   isLoading,
                   numOfErrors,
-                  traceErrorsEventView,
                 })}
                 <StyledSearchBar
                   defaultQuery=""
@@ -173,6 +171,10 @@ class SpansInterface extends React.Component<Props, State> {
 }
 
 const StyledSearchBar = styled(SearchBar)`
+  margin-bottom: ${space(1)};
+`;
+
+const AlertMessageContainer = styled('div')`
   margin-bottom: ${space(1)};
 `;
 
