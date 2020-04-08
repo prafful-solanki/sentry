@@ -71,10 +71,10 @@ class SpansInterface extends React.Component<Props, State> {
     const label =
       numOfErrors > 1
         ? t(
-            `There were %d error events associated with this transaction event.`,
+            `There are %d error events associated with this transaction event.`,
             numOfErrors
           )
-        : t(`There was an error event associated with this transaction event.`);
+        : t(`There is an error event associated with this transaction event.`);
 
     return (
       <AlertMessageContainer>
