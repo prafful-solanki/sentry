@@ -202,13 +202,20 @@ class SpanDetail extends React.Component<Props, State> {
   }
 
   renderSpanErrorMessage() {
-    const {spanErrors, totalNumberOfErrors} = this.props;
+    const {orgId, spanErrors, totalNumberOfErrors} = this.props;
 
     if (spanErrors.length === 0 || totalNumberOfErrors === 0) {
       return null;
     }
 
     // invariant: spanErrors.length <= totalNumberOfErrors
+
+    const eventSlug = generateEventSlug(spanErrors[0]);
+
+    const target = eventDetailsRoute({
+      orgSlug: orgId,
+      eventSlug,
+    });
 
     const message =
       totalNumberOfErrors === 1
@@ -223,6 +230,7 @@ class SpanDetail extends React.Component<Props, State> {
           id: 'id',
           message,
           type: 'error',
+          url: target,
         }}
         system
         hideCloseButton
