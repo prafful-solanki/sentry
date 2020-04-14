@@ -1,10 +1,16 @@
 import {Client} from 'app/api';
 
 type PromptsUpdateParams = {
+  /**
+   * The numeric organization ID
+   */
   organizationId: string;
-  projectId: string;
+  /**
+   * The numeric project ID
+   */
+  projectId?: string;
   feature: string;
-  status: string;
+  status: 'snoozed' | 'dismissed';
 };
 
 export function promptsUpdate(api: Client, params: PromptsUpdateParams) {
